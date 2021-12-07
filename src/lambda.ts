@@ -1,9 +1,17 @@
-import { } from '@aws-cdk/aws-lambda'
-import { APIGatewayProxyResult } from 'aws-lambda'
+import serverlessExpress from '@vendia/serverless-express'
+import express, { Router, Request, Response } from 'express'
 
-export const handler = async (): Promise<APIGatewayProxyResult> => {
-  return {
-    statusCode: 200,
-    body: 'Hello World!!'
-  }
-}
+const app = express()
+const router = Router()
+
+router.get("/", (req: Request, res: Response) => {
+  console.log(req)
+  return res.json({ message: "hello! /" }).sendStatus(200)
+})
+
+router.get("/hello/:name", (req: Request, res: Response) => {
+  return res.json({ message: `Hello! ${req.params.name}` }).sendStatus(200)
+})
+
+app.use("/", router)
+exports.handler = serverlessExpress({ app })
