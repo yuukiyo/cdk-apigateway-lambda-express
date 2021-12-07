@@ -1,15 +1,20 @@
 import * as cdk from '@aws-cdk/core';
-// import * as sqs from '@aws-cdk/aws-sqs';
+import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs'
+import { Runtime } from '@aws-cdk/aws-lambda'
+import { LambdaRestApi } from '@aws-cdk/aws-apigateway'
 
 export class CdkApigatewayLambdaExpressStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const lambda = new NodejsFunction(this, 'lambda', {
+      entry: 'src/lambda.ts',
+      handler: 'handler',
+      runtime: Runtime.NODEJS_14_X
+    })
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'CdkApigatewayLambdaExpressQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    new LambdaRestApi(this, 'rest-api', {
+      handler: lambda
+    })
   }
 }
